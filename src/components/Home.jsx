@@ -131,7 +131,7 @@ export default function Home() {
     const vid = curriculumVideoRef.current
     if (!vid) return
     if (curriculumVideoInView) {
-      vid.play().catch(() => {}) // browsers can reject autoplay in rare cases; ignore silently
+      vid.play().catch(() => {})
     } else {
       vid.pause()
     }
@@ -166,7 +166,7 @@ export default function Home() {
         <Reveal className="wrap">
           <div className="split">
             <div className="split-media">
-              <img src="https://images.unsplash.com/photo-1779358296802-715fc9fbc152?q=80&w=1200&auto=format&fit=crop" alt="Group of engineering students studying together with laptops" />
+              <img src="https://images.unsplash.com/photo-1779358296802-715fc9fbc152?q=80&w=1200&auto=format&fit=crop" alt="Group of engineering students studying together with laptops" loading="lazy" />
               <span className="frame-tag">TEAM SUMIT — COHORT SESSION</span>
             </div>
             <div className="split-body">
@@ -211,7 +211,7 @@ export default function Home() {
                 muted
                 loop
                 playsInline
-                preload="metadata"
+                preload="none"
               />
             </div>
           </div>
@@ -232,7 +232,7 @@ export default function Home() {
           <div className="mentor-preview-grid">
             <div className="mentor-photo-wrap">
               <span className="mentor-badge">Head of Team Sumit</span>
-              <img src="/Images/Director(mentor).png" alt="Mentor presenting to a room of engineering students" />
+              <img src="/Images/Director(mentor).png" alt="Mentor presenting to a room of engineering students" loading="lazy" />
             </div>
             <div className="mentor-preview-body">
               <span className="eyebrow">Your Mentor</span>
@@ -315,7 +315,7 @@ export default function Home() {
 
       {/* FINAL CTA */}
       <section className="final-cta section-img-bg">
-        <div className="bg-media"><img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&w=1800&q=75" alt="Engineering students working together in a workshop setting" /></div>
+        <div className="bg-media"><img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&w=1800&q=75" alt="Engineering students working together in a workshop setting" loading="lazy" /></div>
         <div className="bg-scrim"></div>
         <div className="wrap final-cta-content">
           <span className="eyebrow" style={{ color: 'var(--brass-light)' }}>Team Sumit</span>

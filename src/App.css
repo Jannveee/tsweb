@@ -623,10 +623,10 @@ p{margin:0;}
 
 .mentor-tree-img {
   width: 100%;
-  max-width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
+  border-radius: 50%;
 }
 
 .mentor-tree-cta {

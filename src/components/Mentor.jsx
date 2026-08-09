@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import useCounter from '../hooks/useCounter'
 import useIsMobile from '../hooks/useIsMobile'
+import useGuardedInView from '../hooks/useGuardedInView'
 import { motion, useScroll, useSpring, useTransform, useInView } from 'framer-motion'
 import Reveal from './Reveal'
 
@@ -194,6 +195,48 @@ function AchievementsTimeline() {
   )
 }
 
+function MentorTreeVideo() {
+  const wrapRef = useRef(null)
+  const videoRef = useRef(null)
+  const inView = useGuardedInView(wrapRef, { margin: '200px' })
+
+  useEffect(() => {
+    const vid = videoRef.current
+    if (!vid) return
+    if (inView) {
+      vid.play().catch(() => {})
+    } else {
+      vid.pause()
+    }
+  }, [inView])
+
+  return (
+    <motion.div
+      ref={wrapRef}
+      initial={{ clipPath: 'inset(100% 0% 0% 0%)' }}
+      whileInView={{ clipPath: 'inset(0% 0% 0% 0%)' }}
+      viewport={{ once: true, margin: '-100px' }}
+      className="mentor-tree-wrap"
+    >
+      <video
+        ref={videoRef}
+        src="/Images/1785940441314070.mp4"
+        className="mentor-tree-img"
+        muted
+        loop
+        playsInline
+        preload="none"
+        style={{
+          width: '100%',
+          height: 'auto',
+          display: 'block',
+          objectFit: 'cover'
+        }}
+      />
+    </motion.div>
+  )
+}
+
 export default function Mentor() {
   const [statRef, statValue] = useCounter(25000)
 
@@ -263,28 +306,7 @@ export default function Mentor() {
             </BioBlock>
           </div>
 
-          <motion.div
-  initial={{ clipPath: 'inset(100% 0% 0% 0%)' }}
-  whileInView={{ clipPath: 'inset(0% 0% 0% 0%)' }}
-  viewport={{ once: true, margin: '-100px' }}
-  className="mentor-tree-wrap"
->
-  <video
-    src="/Images/1785940441314070.mp4"
-    className="mentor-tree-img"
-    autoPlay
-    muted
-    loop
-    playsInline
-    preload="auto"
-    style={{
-      width: '100%',
-      height: 'auto',
-      display: 'block',
-      objectFit: 'cover'
-    }}
-  />
-</motion.div>
+          <MentorTreeVideo />
         </div>
       </section>
 
@@ -293,7 +315,7 @@ export default function Mentor() {
 
       {/* CLOSING BAND */}
       <section className="closing-band section-img-bg">
-        <div className="bg-media"><img src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?auto=format&fit=crop&w=1800&q=75" alt="Laptop with code, symbolising ongoing growth" /></div>
+        <div className="bg-media"><img src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?auto=format&fit=crop&w=1800&q=75" alt="Laptop with code, symbolising ongoing growth" loading="lazy" /></div>
         <div className="bg-scrim"></div>
         <Reveal className="wrap">
           <p>All of this — before graduation. While still a student. While still figuring it out, just like you are.</p>

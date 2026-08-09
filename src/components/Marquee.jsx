@@ -27,7 +27,7 @@ export default function Marquee() {
         <div className="marquee-track">
           {[...topLogos, ...topLogos, ...topLogos, ...topLogos, ...topLogos, ...topLogos, ...topLogos, ...topLogos].map((logo, i) => (
             <span className="marquee-logo" key={i}>
-              <img src={`/Images/logos/${logo}.png`} alt={logo} />
+              <img src={`/Images/logos/${logo}.png`} alt={logo} loading="lazy" />
             </span>
           ))}
         </div>
@@ -36,7 +36,7 @@ export default function Marquee() {
         <div className="marquee-track reverse">
           {[...bottomLogos, ...bottomLogos, ...bottomLogos, ...bottomLogos, ...bottomLogos, ...bottomLogos, ...bottomLogos, ...bottomLogos].map((logo, i) => (
             <span className="marquee-logo" key={`r-${i}`}>
-              <img src={`/Images/logos/${logo}.png`} alt={logo} />
+              <img src={`/Images/logos/${logo}.png`} alt={logo} loading="lazy" />
             </span>
           ))}
         </div>
