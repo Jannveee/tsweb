@@ -198,7 +198,10 @@ function AchievementsTimeline() {
 function MentorTreeVideo() {
   const wrapRef = useRef(null)
   const videoRef = useRef(null)
-  const inView = useGuardedInView(wrapRef, { margin: '200px' })
+  const isMobile = useIsMobile()
+  // Smaller margin on mobile so the observer fires reliably on short viewports
+  const inView = useGuardedInView(wrapRef, { margin: isMobile ? '0px' : '200px' })
+  const [revealed, setRevealed] = useState(false)
 
   useEffect(() => {
     const vid = videoRef.current
@@ -210,13 +213,23 @@ function MentorTreeVideo() {
     }
   }, [inView])
 
+  // Drive the reveal off the same inView signal used for play/pause,
+  // instead of Framer's own whileInView trigger (unreliable on mobile).
+  // Once revealed, stays revealed.
+  useEffect(() => {
+    if (inView && !revealed) {
+      setRevealed(true)
+    }
+  }, [inView, revealed])
+
   return (
     <motion.div
       ref={wrapRef}
       initial={{ clipPath: 'inset(100% 0% 0% 0%)' }}
-      whileInView={{ clipPath: 'inset(0% 0% 0% 0%)' }}
-      viewport={{ once: true, margin: '-100px' }}
+      animate={{ clipPath: revealed ? 'inset(0% 0% 0% 0%)' : 'inset(100% 0% 0% 0%)' }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
       className="mentor-tree-wrap"
+      style={{ minHeight: isMobile ? 220 : undefined }}
     >
       <video
         ref={videoRef}
@@ -225,7 +238,8 @@ function MentorTreeVideo() {
         muted
         loop
         playsInline
-        preload="none"
+        autoPlay
+        preload="metadata"
         style={{
           width: '100%',
           height: 'auto',
@@ -239,6 +253,7 @@ function MentorTreeVideo() {
 
 export default function Mentor() {
   const [statRef, statValue] = useCounter(25000)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -249,7 +264,13 @@ export default function Mentor() {
       {/* MENTOR HEADER */}
       <section className="mentor-header">
         <div className="bg-media">
-          <img className="is-active" src="/Images/director.png" alt="Sumit Waghmare" />
+          <img
+           className={`is-active${isMobile ? ' mentor-header-img-mobile' : ''}`}
+          src="/Images/director.png"
+          alt="Sumit Waghmare"
+          loading="eager"
+          fetchpriority="high"
+          />
         </div>
         <div className="bg-scrim"></div>
         <div className="mentor-header-content">
@@ -315,7 +336,7 @@ export default function Mentor() {
 
       {/* CLOSING BAND */}
       <section className="closing-band section-img-bg">
-        <div className="bg-media"><img src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?auto=format&fit=crop&w=1800&q=75" alt="Laptop with code, symbolising ongoing growth" loading="lazy" /></div>
+        <div className="bg-media"><img src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?auto=format&fit=crop&w=1800&q=75" alt="Laptop with code, symbolising ongoing growth" loading="lazy" decoding="async" /></div>
         <div className="bg-scrim"></div>
         <Reveal className="wrap">
           <p>All of this — before graduation. While still a student. While still figuring it out, just like you are.</p>

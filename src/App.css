@@ -206,6 +206,7 @@ p{margin:0;}
 .hero{
   position:relative;
   min-height:100vh;
+  min-height:100dvh;
   display:flex;
   align-items:flex-end;
   overflow:hidden;
@@ -500,6 +501,16 @@ p{margin:0;}
   margin: 0 auto;
 }
 
+@media (max-width:768px){
+  .curriculum-screen-frame{
+    width: 100%;
+  }
+  .curriculum-video{
+    width: 100%;
+    max-height: 46vh;
+  }
+}
+
 /* ---------- Tools marquee ---------- */
 /* ---------- Tools marquee (infinite scroll, single track) ---------- */
 .marquee-section{background:var(--bg);color:var(--text);padding:90px 0;}
@@ -619,14 +630,24 @@ p{margin:0;}
   justify-content: center;
   gap: 20px;
   min-width: 0;
+  width: 100%;
 }
 
 .mentor-tree-img {
   width: 100%;
-  height: 100%;
+  max-width: 420px;
+  aspect-ratio: 1 / 1;
+  height: auto;
   object-fit: cover;
   display: block;
+  margin: 0 auto;
   border-radius: 50%;
+}
+
+@media (max-width: 900px){
+  .mentor-tree-img{
+    max-width: 280px;
+  }
 }
 
 .mentor-tree-cta {
@@ -853,10 +874,16 @@ p{margin:0;}
 
 /* ---------- Mentor page specific ---------- */
 .mentor-header{
-  position:relative;min-height:100vh;display:flex;align-items:flex-end;overflow:hidden;background:var(--navy-deep);
+  position:relative;min-height:100vh;min-height:100dvh;display:flex;align-items:flex-end;overflow:hidden;background:var(--navy-deep);
 }
 .mentor-header .bg-media{position:absolute;inset:0;}
 .mentor-header .bg-media img{width:100%;height:100%;object-fit:cover;object-position:center 0%;}
+
+@media (max-width:768px){
+  .mentor-header .bg-media img.mentor-header-img-mobile{
+    object-position: 75% 10%;
+  }
+}
 .mentor-header .bg-scrim{
   position:absolute;inset:0;
   background:linear-gradient(180deg, rgba(13,21,36,0.35) 0%, rgba(13,21,36,0.94) 92%),linear-gradient(90deg, rgba(13,21,36,0.7) 0%, rgba(13,21,36,0.05) 60%);

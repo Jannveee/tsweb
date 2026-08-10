@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import useCounter from '../hooks/useCounter'
 import useGuardedInView from '../hooks/useGuardedInView'
+import useIsMobile from '../hooks/useIsMobile'
 import FaqItem from './FaqItem'
 import Marquee from './Marquee'
 import RegisterForm from './RegisterForm'
@@ -50,16 +51,20 @@ function RevealLi({ i, className, children }) {
   )
 }
 
+const STEP_BASE = 0.3
+const STEP_UNIT = 0.55
+
 function StepCard({ step, i, stepsInView }) {
   const Icon = step.icon
-  const baseDelay = 0.5 + i * 0.25
+  // box i appears at slot 2*i in the alternating box/line sequence
+  const baseDelay = STEP_BASE + i * STEP_UNIT * 2
 
   return (
     <div className="step-node">
       <motion.div
         initial={{ opacity: 0, scale: 0.5, y: 20 }}
         animate={stepsInView ? { opacity: 1, scale: 1, y: 0 } : {}}
-        transition={{ duration: 0.6, delay: 0.3 + baseDelay, type: 'spring', stiffness: 120 }}
+        transition={{ duration: 0.5, delay: baseDelay, type: 'spring', stiffness: 120 }}
         className="step-icon-badge"
       >
         <Icon size={28} strokeWidth={1.8} />
@@ -69,7 +74,7 @@ function StepCard({ step, i, stepsInView }) {
       <motion.h3
         initial={{ opacity: 0, y: 15 }}
         animate={stepsInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5, delay: 0.7 + baseDelay }}
+        transition={{ duration: 0.4, delay: baseDelay + 0.15 }}
       >
         {step.title}
       </motion.h3>
@@ -77,7 +82,7 @@ function StepCard({ step, i, stepsInView }) {
       <motion.p
         initial={{ opacity: 0, y: 10 }}
         animate={stepsInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5, delay: 1.0 + baseDelay }}
+        transition={{ duration: 0.4, delay: baseDelay + 0.3 }}
       >
         {step.desc}
       </motion.p>
@@ -119,13 +124,17 @@ export default function Home() {
   const [statRef, statValue] = useCounter(25000)
   const [statRef2, statValue2] = useCounter(150000, '+')
   const activeHero = useHeroBgCrossfade(heroImages.length)
+  const isMobile = useIsMobile()
 
   const enrollRef = useRef(null)
   const enrollInView = useGuardedInView(enrollRef)
 
   const curriculumVideoWrapRef = useRef(null)
   const curriculumVideoRef = useRef(null)
-  const curriculumVideoInView = useGuardedInView(curriculumVideoWrapRef)
+  // Smaller/no margin on mobile so the observer actually fires on short viewports
+  const curriculumVideoInView = useGuardedInView(curriculumVideoWrapRef, {
+    margin: isMobile ? '0px' : '200px',
+  })
 
   useEffect(() => {
     const vid = curriculumVideoRef.current
@@ -143,7 +152,15 @@ export default function Home() {
       <section className="hero">
         <div className="hero-bg">
           {heroImages.map((img, i) => (
-            <img key={i} className={i === activeHero ? 'is-active' : ''} src={img.src} alt={img.alt} />
+            <img
+              key={i}
+              className={i === activeHero ? 'is-active' : ''}
+              src={img.src}
+              alt={img.alt}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : 'auto'}
+              decoding="async"
+            />
           ))}
         </div>
         <div className="hero-scrim"></div>
@@ -166,7 +183,12 @@ export default function Home() {
         <Reveal className="wrap">
           <div className="split">
             <div className="split-media">
-              <img src="https://images.unsplash.com/photo-1779358296802-715fc9fbc152?q=80&w=1200&auto=format&fit=crop" alt="Group of engineering students studying together with laptops" loading="lazy" />
+              <img
+                src="https://images.unsplash.com/photo-1779358296802-715fc9fbc152?q=80&w=1200&auto=format&fit=crop"
+                alt="Group of engineering students studying together with laptops"
+                loading="lazy"
+                decoding="async"
+              />
               <span className="frame-tag">TEAM SUMIT — COHORT SESSION</span>
             </div>
             <div className="split-body">
@@ -211,7 +233,9 @@ export default function Home() {
                 muted
                 loop
                 playsInline
-                preload="none"
+                autoPlay
+                preload="metadata"
+                style={{ width: '100%', height: 'auto', display: 'block' }}
               />
             </div>
           </div>
@@ -232,7 +256,7 @@ export default function Home() {
           <div className="mentor-preview-grid">
             <div className="mentor-photo-wrap">
               <span className="mentor-badge">Head of Team Sumit</span>
-              <img src="/Images/Director(mentor).png" alt="Mentor presenting to a room of engineering students" loading="lazy" />
+              <img src="/Images/Director(mentor).png" alt="Mentor presenting to a room of engineering students" loading="lazy" decoding="async" />
             </div>
             <div className="mentor-preview-body">
               <span className="eyebrow">Your Mentor</span>
@@ -252,18 +276,24 @@ export default function Home() {
             <h2>How To Enroll</h2>
           </div>
           <div className="steps-grid-wrap" ref={enrollRef}>
-            <div className="steps-line-row">
-              {[0, 1, 2, 3, 4].map((_, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ scaleX: 0 }}
-                  animate={enrollInView ? { scaleX: 1 } : {}}
-                  transition={{ duration: 1.5, delay: 0.5 + i * 0.25, ease: 'easeInOut' }}
-                  style={{ originX: 0 }}
-                  className="steps-line-segment"
-                />
-              ))}
+            {!isMobile && (
+              <div className="steps-line-row">
+                {[0, 1, 2, 3, 4].map((_, i) => (
+                  <motion.div
+                   key={i}
+                   initial={{ scaleX: 0 }}
+                   animate={enrollInView ? { scaleX: 1 } : {}}
+                   transition={{
+                    duration: STEP_UNIT,
+                    delay: STEP_BASE + (i * 2 + 1) * STEP_UNIT,
+                    ease: 'easeInOut',
+                   }}
+                   style={{ originX: 0 }}
+                   className="steps-line-segment"
+                  />
+                ))}
             </div>
+          )}
             <div className="steps">
               {steps.map((step, i) => (
                 <StepCard key={i} step={step} i={i} stepsInView={enrollInView} />
@@ -315,7 +345,7 @@ export default function Home() {
 
       {/* FINAL CTA */}
       <section className="final-cta section-img-bg">
-        <div className="bg-media"><img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&w=1800&q=75" alt="Engineering students working together in a workshop setting" loading="lazy" /></div>
+        <div className="bg-media"><img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&w=1800&q=75" alt="Engineering students working together in a workshop setting" loading="lazy" decoding="async" /></div>
         <div className="bg-scrim"></div>
         <div className="wrap final-cta-content">
           <span className="eyebrow" style={{ color: 'var(--brass-light)' }}>Team Sumit</span>
